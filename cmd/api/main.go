@@ -36,16 +36,19 @@ func main() {
 	userRepo := repository.NewUserRepository(database)
 	bookRepo := repository.NewBookRepository(database)
 	loanRepo := repository.NewLoanRepository(database)
+	laptopRepo := repository.NewLaptopRepository(database)
 
 	// Servicios
 	authService := service.NewAuthService(userRepo, cfg.JWTSecret, cfg.JWTExpHours)
 	bookService := service.NewBookService(bookRepo)
 	loanService := service.NewLoanService(loanRepo, bookRepo)
+	laptopService := service.NewLaptopService(laptopRepo)
 
 	// Handlers
 	authHandler := handler.NewAuthHandler(authService)
 	bookHandler := handler.NewBookHandler(bookService)
 	loanHandler := handler.NewLoanHandler(loanService)
+	laptopHandler := handler.NewLaptopHandler(laptopService)
 
 	router := gin.Default()
 
@@ -57,7 +60,7 @@ func main() {
 		AllowCredentials: false,
 	}))
 
-	handler.SetupRoutes(router, authHandler, bookHandler, loanHandler, cfg.JWTSecret)
+	handler.SetupRoutes(router, authHandler, bookHandler, loanHandler, laptopHandler, cfg.JWTSecret)
 
 	log.Printf("Servidor escuchando en el puerto %s", cfg.AppPort)
 	log.Printf("Documentación Swagger disponible en http://localhost:%s/swagger/index.html", cfg.AppPort)
